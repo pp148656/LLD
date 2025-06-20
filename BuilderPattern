@@ -1,0 +1,2 @@
+Code for builder patter.
+Each entity has a builder class to simplify the object creation responsibility.
