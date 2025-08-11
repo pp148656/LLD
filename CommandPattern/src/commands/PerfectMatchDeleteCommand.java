@@ -12,7 +12,7 @@ public class PerfectMatchDeleteCommand implements Command {
     private PerfectMatchDeleter deleter;
     private String name;
     private TagInserter inserter;
-    PerfectMatchDeleteCommand(PerfectMatchDeleter deleter, String name, TagInserter inserter) {
+    public PerfectMatchDeleteCommand(PerfectMatchDeleter deleter, String name, TagInserter inserter) {
         this.deleter = deleter;
         this.inserter = inserter;
         this.deletedTags = new ArrayList<>();
