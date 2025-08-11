@@ -9,7 +9,7 @@ public class PartialMatchDeleteCommand implements Command {
     private Pattern name;
     private PartialMatchDeleter deleter;
     private List<String> deletedTags;
-    PartialMatchDeleteCommand(String name, PartialMatchDeleter deleter) {
+    public PartialMatchDeleteCommand(String name, PartialMatchDeleter deleter) {
         this.name = Pattern.compile(name);
         this.deleter = deleter;
     }
