@@ -1,0 +1,66 @@
+//when you have same info and multiple consumer and write top of it
+//You need to build multiple displays of the data
+//You don't need the weather station to change
+//only add/remove displays
+
+public class WeatherData{
+    private int temperature;
+    private int humidity;
+    private int windSpeed;
+    //public getters and setters
+}
+public class WeatherStation{
+        List<WeatherSubscriber> weatherSubscriber;
+        private WeatherData weatherData;
+        public WeatherStation (WeatherData weatherData){
+              this.weatherData= weatherData;
+        }
+        public void setWeatherData(WeatherData weatherData){
+            this.weatherData= weatherData;
+            notifySubscribers(weatherData);
+        }
+        private void notifySubscribers(){
+            for(subscriber:weatherSubscriber){
+                subscriber.update();
+            }
+        }
+        public WeatherData getWeatherData(){
+            return this.weatherData;
+        }
+        //keep separate getters for temp, humidity, wind speed
+
+        public void addSubscriber(Subscriber sub){
+            weatherSubscriber.add(sub);
+        }
+        public void removeSubscriber(Subscriber sub){
+            weatherSubscriber.erase(sub);
+        }
+}
+public interface Subscriber{
+    public void update();
+}
+
+public Class TVWeatherSubscriber implements Subscriber{
+     private final WeatherStation weatherStation;
+
+     public TVWeatherSubscriber(WeatherStation weatherStation){
+        this.weatherStation= weatherStation;
+        weatherStation.addSubscriber(this);
+     }
+     @Overrride
+    public void update(){
+        WeatherData weatherdata= this.weatherStation.getWeatherData();
+        this.display(weatherdata.getTemperature(),weatherdata.getHumidity());
+    }
+    public void display(int temp,int humidity){
+        if(temp>30){
+            //show red colored screen on forecast
+        }
+        if(humidity>90){
+            //showraindrops
+        }
+
+    }
+
+}
+
