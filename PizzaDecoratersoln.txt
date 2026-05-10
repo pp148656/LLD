@@ -1,0 +1,64 @@
+//decorator pattern
+//when you have product of 4-5 types and you need to decorate on top of it
+//problens it solves you dont need to create new classes everytime for each combo
+// Decorator Pattern
+// Identifier -> Exponential explosion of combinations. Decoration of item on one item leads to object of same type.
+// How to approach ?
+// 1. Make an abstract class with the item to be decorated.
+
+public abstract class Pizza{
+    private String final name;
+    private int final price;
+    protected Pizza(int price, String name){
+        //set both of them
+    }
+    //getter for price-public
+    //getter for name-public
+}
+
+public abstract class Topping extends Pizza{
+    private final Pizza pizza;
+    public Topping(int price,int name,Pizza pizza){
+            //pass in pizza, price and name
+            //call super constructor witg price and name
+          super(price,name);
+         this.pizza=pizza;
+    }
+    public String getName(){
+        return super.getName()+ " " +pizza.getName();
+    }
+     public int getPrice(){
+            return super.getPrice() +pizza.getPrice();
+     }
+}
+
+
+//concrete classes
+public class WheatThinCrust extends Pizza{
+      public WheatThinCrust(){
+        super(50,"WheatThinCrust");
+      }
+}
+
+
+public class CheeseBurst extends Pizza{
+     public CheeseBurst(){
+            super(50,"CheeseBurst");
+     }
+}
+
+
+public class Mushroom extends Topping{
+    public Mushroom(Pizza pizza){
+        super(100,"Mushroom",pizza);
+    }
+}
+
+
+
+//Inside SImulator
+//Create a double Onion Mushroom WheatBase Pizza
+
+Pizza customizedPizza= new Onion(new Onion(new Mushroom(new WheatThinCrust());
+log.info(customizedPizza.getPrice());
+log.info(customizedPizza.getName());

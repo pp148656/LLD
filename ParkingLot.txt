@@ -1,0 +1,118 @@
+import java.util.*;
+
+// Enums make the code cleaner
+enum VehicleType {
+    BIKE(5, 50), CAR(10, 100);
+    private final int size;
+    private final int price;
+    VehicleType(int size, int price) { this.size = size; this.price = price; }
+    public int getSize() { return size; }
+    public int getPrice() { return price; }
+}
+
+abstract class Vehicle {
+    private String licensePlate;
+    private VehicleType type;
+
+    public Vehicle(String licensePlate, VehicleType type) {
+        this.licensePlate = licensePlate;
+        this.type = type;
+    }
+    public String getLicensePlate() { return licensePlate; }
+    public VehicleType getType() { return type; }
+}
+
+class Car extends Vehicle {
+    public Car(String id) { super(id, VehicleType.CAR); }
+}
+
+class Bike extends Vehicle {
+    public Bike(String id) { super(id, VehicleType.BIKE); }
+}
+
+class Slot {
+    private int slotId;
+    private int size;
+    private Vehicle vehicle;
+
+    public Slot(int slotId, int size) {
+        this.slotId = slotId;
+        this.size = size;
+    }
+
+    public boolean isAvailable() { return vehicle == null; }
+    public boolean canFit(Vehicle v) { return size >= v.getType().getSize(); }
+    public void park(Vehicle v) { this.vehicle = v; }
+    public void remove() { this.vehicle = null; }
+
+    public int getSlotId() { return slotId; }
+    public Vehicle getVehicle() { return vehicle; }
+}
+
+class ParkingLot {
+    private List<Slot> slots;
+    private Map<String, Slot> occupiedSlots; // Quick lookup for removal
+
+    public ParkingLot(List<Slot> slots) {
+        this.slots = slots;
+        this.occupiedSlots = new HashMap<>();
+    }
+
+    public Optional<Slot> parkVehicle(int amount, Vehicle vehicle) {
+        // Validation logic
+        if (amount < vehicle.getType().getPrice()) {
+            System.out.println("Insufficient funds for " + vehicle.getLicensePlate());
+            return Optional.empty();
+        }
+        
+        // Find and park for multiple gates/threads and concurrent access
+        synchronized(this){
+            for (Slot slot : slots) {
+                if (slot.isAvailable() && slot.canFit(vehicle)) {
+                    slot.park(vehicle);
+                    occupiedSlots.put(vehicle.getLicensePlate(), slot);
+                    return Optional.of(slot);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    public boolean removeVehicle(String licensePlate) {
+        if (!occupiedSlots.containsKey(licensePlate)) {
+            System.out.println("Vehicle not found!");
+            return false;
+        }
+        Slot slot = occupiedSlots.get(licensePlate);
+        slot.remove();
+        occupiedSlots.remove(licensePlate);
+        return true;
+    }
+}
+
+public class ParkingSimulator {
+    public static void main(String[] args) {
+        // Create slots: 1 small (5), 1 medium (10)
+        List<Slot> slots = Arrays.asList(new Slot(1, 5), new Slot(2, 10));
+        ParkingLot lot = new ParkingLot(slots);
+
+        Vehicle myBike = new Bike("MH-12-1234");
+        Vehicle myCar = new Car("KA-01-5678");
+
+        // Test 1: Successful parking
+        lot.parkVehicle(50, myBike).ifPresent(s ->
+            System.out.println("Bike parked in slot " + s.getSlotId()));
+
+        // Test 2: Insufficient funds
+        lot.parkVehicle(20, myCar);
+
+        // Test 3: Successful car parking
+        lot.parkVehicle(100, myCar).ifPresent(s ->
+            System.out.println("Car parked in slot " + s.getSlotId()));
+
+        // Test 4: Remove vehicle
+        lot.removeVehicle("MH-12-1234");
+        System.out.println("Bike removed.");
+    }
+
+}

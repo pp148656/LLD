@@ -1,0 +1,117 @@
+
+//PROBLEM IT SOLVES- removes if else contamination in ATMMachine
+//state defines behavior machine controls state
+//functionality we need readcard, dispensemoney, read withdrawal, ejectcard etc
+
+public class CardDetails{
+    Long cardNumber;
+    CardType cardType;
+}
+public interface ATMState {
+       public boolean readCard(CardDetails cardDetails, UUID tid);
+       public boolean readWithdrawalDetails(CardDetails cardDetails,int amount ,UUID tid);
+       public boolean ejectCard();
+       public UUID init();
+       public boolean cancelTransaction();
+}
+public ReadyState implements ATMState{
+     private final ATMMachine atmMachine;
+
+     //a constructor that accepts ATMMachine
+     @Override
+     public UUID init(){
+       UUID tid= UUID.random();
+       //save in db
+       //its very important to pass this as all states should have same machine ref
+       this.atmMachine.changeState(new CardReadingState(this));
+       return tid;
+     }
+     //others overrides throw exception here
+
+}
+public CardReadingState implements ATMState{
+     private final ATMMachine atmMachine;
+
+     //a constructor that accepts ATMMachine
+     @Override
+     public boolean readCard(CardDetails cardDetails, UUID tid){
+        //call and API to validate the card
+
+        //persistInDB(tid, cardDetails);
+        // if anything fails return false
+        this.atmMachine.changeState(new WithdrawalDetailsReadingState(this));
+        return true;
+     }
+     @Override
+     public boolean cancelTransaction(UUID tid){
+           this.atmMachine.changeState(new ReadyState(this));
+           return true;
+     }
+     //others overrides throw exception here
+}
+
+public WithdrawalDetailsReadingState implements ATMState{
+     private final ATMMachine atmMachine;
+
+     //a constructor that accepts ATMMachine
+     @Override
+     public boolean readWithdrawalDetails(CardDetails cardDetails,int amount, UUID tid){
+        //call and API to validate the card
+
+        //persistInDB(tid, amount,cardDetails);
+        // if anything fails return false
+        this.atmMachine.changeState(new CashDispensingState(this));
+        return true;
+     }
+      @Override
+      public boolean cancelTransaction(UUID tid){
+            this.atmMachine.changeState(new EjectCardState(this));
+            return true;
+      }
+          //others overrides throw exception here
+     //others overrides throw exception here
+}
+
+public EjectCard implements ATMState{
+
+}
+public CashDispensing implements ATMState{
+
+}
+public class ATMMachine{
+   private ATMState state;
+   private int machineNumber;
+   public ATMMachine(){
+          this.state=new ReadyState(this);
+   }
+
+   public boolean readCard(CardDetails cardDetails){
+       return this.state.readCard(cardDetails);
+   }
+   //same for other methods we call the states methods directly
+
+
+   public void changeState(State state){
+    this.state= state;
+   }
+}
+
+public class ATMSimulator{
+     private final ATMMachine atmMachine;
+     //all args constructor
+     //happy path
+
+
+     public void simulate(){
+        //create cardDetails here
+         UUID tid=atmMachine.init();
+         atmMachine.readCard(cardDetails,tid);
+         //if true then proceed
+         atmMachine.readWithdrawalDetails(amount,cardDetails,tid);
+
+     }
+
+
+
+
+}
