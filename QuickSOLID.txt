@@ -1,0 +1,52 @@
+SOLID PRINCIPLES & DESIGN PATTERNS CHEAT SHEET
+SOLID PRINCIPLES
+
+S: Single Responsibility
+
+Pitch: "A class should have only one reason to change."
+
+Example: Separate Business Logic (Salary Calculation) from Side Effects (Printing/Logging).
+
+O: Open/Closed
+
+Pitch: "Open for extension, closed for modification."
+
+Example: Use interfaces to add new features (e.g., a new Payment Gateway) without changing existing code.
+
+L: Liskov Substitution
+
+Pitch: "Subclasses must be substitutable for their base classes."
+
+Example: If 'Bird' has a fly() method, a 'Penguin' shouldn't inherit from it. Avoids 'NotImplemented' errors.
+
+I: Interface Segregation
+
+Pitch: "Don't force a class to implement methods it doesn't need."
+
+Example: Split a large 'Worker' interface into 'Coder' and 'Designer' interfaces.
+
+D: Dependency Inversion
+
+Pitch: "Depend on abstractions, not concretions."
+
+Example: High-level modules shouldn't depend on low-level databases; both should depend on interfaces. Essential for Mocking/Unit Testing.
+
+KEY DESIGN PATTERNS
+
+A. Creational (How objects are created)
+
+Singleton: Ensures only one instance exists.
+
+Factory: Hides complex creation logic from the user.
+
+B. Structural (How classes/objects are composed)
+
+Adapter: Helps two incompatible interfaces work together.
+
+Decorator: Adds new behavior to an object dynamically without using inheritance.
+
+C. Behavioral (How objects communicate)
+
+Strategy: Allows switching algorithms at runtime (Your Sorter example!).
+
+Observer: The foundation for 'Events' or 'Pub-Sub' systems.
